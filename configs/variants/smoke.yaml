@@ -1,0 +1,10 @@
+# 冒烟测试：3 只股票、短区间，用于验证流程与字段口径
+universe:
+  limit: 3
+
+data:
+  start_date: "2024-01-01"
+  end_date: "2025-06-30"
+
+output:
+  start_date: "2024-07-01"

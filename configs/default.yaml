@@ -1,0 +1,36 @@
+run:
+  seed: 42
+  output_dir: outputs
+
+universe:
+  # 中证500
+  index_code: "000905"
+  # 只取前 N 只做快速验证；null 表示全量
+  limit: 50
+  exclude_bj: true
+
+market:
+  # 计算 beta / 残差波动率所用的市场指数（中证流通）
+  index_code: "000902"
+  fallback_index_code: "000905"
+
+data:
+  # 预留 504 日动量与 252 日风险因子的回看窗口
+  start_date: "2021-09-01"
+  end_date: ""
+  adjust: qfq
+  cache_dir: data/cache
+  max_workers: 4
+  retries: 3
+  fetch_unadjusted: true
+  # 财报缓存有效期（天）；每天自动更新时会定期重取
+  financial_cache_days: 7
+
+output:
+  # 因子值输出的起始日；null 表示不裁剪
+  start_date: "2024-01-01"
+  min_coverage: 0.2
+
+web:
+  max_preview_factors: 8
+  preview_days: 250

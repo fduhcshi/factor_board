@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>一面量化因子砌成的卡片墙 · 因子看板</title>
+  <link rel="stylesheet" href="./assets/dashboard.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div class="brand">
+        <span class="brand-mark">∑</span>
+        <span>Factor Board</span>
+      </div>
+      <div class="nav-links">
+        <a href="#board">因子看板</a>
+        <a href="./values.html">因子值覆盖率</a>
+        <a href="../report.md">研究报告</a>
+      </div>
+      <span class="pill yellow mono" id="run-pill">RUN —</span>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">JoinQuant Factor Library · 285 Factors</div>
+        <h1>一面量化因子<br />砌成的<span class="hl">卡片墙</span></h1>
+        <p class="lede">
+          每张卡片是一个因子，整块颜色按当前指标的高低从绿到红渐变；悬停看 IC、IR、多空年化等指标与公式，
+          点击查看聚宽全部统计指标与因子值曲线。
+        </p>
+      </div>
+      <div class="hero-stats" id="hero-stats"></div>
+    </header>
+
+    <div class="toolbar" id="toolbar">
+      <div class="toolbar-inner">
+        <div class="metric-chips" id="metric-chips"></div>
+        <div class="layout-chips" id="layout-chips">
+          <button type="button" class="lchip" data-layout="global" aria-pressed="true">全局排序</button>
+          <button type="button" class="lchip" data-layout="group" aria-pressed="false">分组</button>
+        </div>
+        <div class="legend">
+          <span class="legend-label" id="legend-low">—</span>
+          <span class="legend-bar" id="legend-bar"></span>
+          <span class="legend-label" id="legend-high">—</span>
+        </div>
+        <input class="search-box" id="search" type="search" placeholder="搜索因子名 / 中文名…" aria-label="搜索因子" />
+      </div>
+    </div>
+
+    <div id="board">
+      <div class="empty">正在加载因子数据…</div>
+    </div>
+
+    <footer>
+      <div class="footer-row">
+        <span id="footer-meta">—</span>
+        <a href="./values.html">因子值覆盖率视图</a>
+      </div>
+      <div class="footer-row footer-source">
+        <span>因子来源参考：</span>
+        <a href="https://www.joinquant.com/view/factorlib/list" target="_blank" rel="noopener">聚宽因子看板 joinquant.com/view/factorlib/list</a>
+        <span class="footer-note">绩效指标为中证500 · 近3年 · 无手续费口径 · 每交易日 18:30 自动更新</span>
+      </div>
+    </footer>
+  </main>
+
+  <div class="tip" id="tip" role="tooltip"></div>
+
+  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-panel" id="modal-panel">
+      <button class="modal-close" id="modal-close" type="button" aria-label="关闭">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="./assets/echarts.min.js"></script>
+  <script src="./data/factor-metrics.js"></script>
+  <script src="./assets/dashboard.js"></script>
+  <noscript>
+    <p style="max-width:1240px;margin:0 auto;padding:24px;">本页面需要启用 JavaScript 才能渲染因子卡片墙。</p>
+  </noscript>
+</body>
+</html>

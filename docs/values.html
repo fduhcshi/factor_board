@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>因子值覆盖率视图 · 聚宽因子库复现</title>
+  <link rel="stylesheet" href="./assets/style.css" />
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <div class="brand">
+        <span class="brand-mark">∑</span>
+        <span>Factor Dashboard</span>
+      </div>
+      <div class="nav-links">
+        <a href="./index.html">因子看板</a>
+        <a href="#overview">实现概览</a>
+        <a href="#preview">因子预览</a>
+        <a href="#catalog">因子清单</a>
+        <a href="#notes">口径与局限</a>
+      </div>
+      <span class="pill yellow mono" id="run-pill">RUN —</span>
+    </div>
+  </nav>
+
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">JoinQuant Factor Library × AKShare</div>
+        <h1>把 <span class="hl">285 个聚宽因子</span><br />用 AKShare 重算了一遍</h1>
+        <p class="lede">
+          逐个拆解因子看板里的计算公式，映射到 AKShare 的行情与三大报表字段，
+          用 AKShare 数据重新计算因子值。本阶段只产出因子值，不做 IC、分层收益与多空回测。
+        </p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#catalog">查看因子清单 →</a>
+          <a class="btn" href="#notes">数据口径与局限</a>
+        </div>
+      </div>
+      <div class="hero-stickers">
+        <div class="sticker rotate-a">
+          <h3>Implemented</h3>
+          <div class="big" id="sticker-implemented">—</div>
+          <div class="sub">个因子已用 AKShare 数据实现</div>
+        </div>
+        <div class="sticker rotate-b">
+          <h3>Unsupported</h3>
+          <div class="big" id="sticker-unsupported">—</div>
+          <div class="sub">个因子受数据源限制，逐条标注原因</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="metrics" id="metrics"></div>
+
+    <section id="overview">
+      <div class="section-head">
+        <h2>实现概览</h2>
+        <span class="pill mono" id="pill-dates">—</span>
+      </div>
+      <p class="section-note">
+        覆盖率定义为「因子值非空的单元格数 ÷ 全部单元格数」。窗口越长的因子（如 504 日动量、
+        252 日风险因子）在数据起点附近天然缺失，因此覆盖率会低于 1。
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>分组实现情况</h3>
+          <p class="card-sub">按量能、价格技术、财务、风格四组统计</p>
+          <div class="chart" id="chart-groups"></div>
+        </div>
+        <div class="card">
+          <h3>覆盖率最低的 15 个因子</h3>
+          <p class="card-sub">已实现因子中非空比例最低的一批，多为长回看窗口或科目缺失</p>
+          <div class="chart" id="chart-coverage"></div>
+        </div>
+      </div>
+      <div class="callout" style="margin-top: 22px;">
+        <strong>当前阶段只算因子值。</strong>
+        没有计算 IC、IR、分层收益、多空净值与换手率——这些需要额外的收益面板与调仓规则，
+        属于下一步工作。页面上的「最新截面均值」等统计仅用于检查数量级是否合理。
+      </div>
+    </section>
+
+    <section id="preview">
+      <div class="section-head">
+        <h2>因子预览</h2>
+      </div>
+      <p class="section-note">
+        每个分组取覆盖率最高的因子，画出截面中位数与 25/75 分位随时间的走势。
+        数值口径为原始因子值，未做去极值与标准化。
+      </p>
+      <div class="card">
+        <div class="controls">
+          <label class="mono" for="series-select" style="font-size:12px;letter-spacing:1px;">FACTOR</label>
+          <select id="series-select"></select>
+          <span class="pill blue mono" id="series-stats">—</span>
+        </div>
+        <div class="chart tall" id="chart-series"></div>
+      </div>
+    </section>
+
+    <section id="catalog">
+      <div class="section-head">
+        <h2>因子清单</h2>
+        <span class="pill mono" id="pill-count">—</span>
+      </div>
+      <p class="section-note">
+        支持按名称、中文名、公式检索，并按分组与状态筛选。公式栏保留聚宽原文，
+        便于对照实现；未实现因子在「说明」列给出具体原因。
+      </p>
+
+      <div class="controls">
+        <input type="search" id="search" placeholder="搜索因子名 / 中文名 / 公式…" aria-label="搜索因子" />
+        <div class="chips" id="group-chips"></div>
+        <div class="chips" id="status-chips"></div>
+        <button class="btn" id="export-csv" type="button">导出筛选结果 CSV</button>
+      </div>
+
+      <div class="table-shell">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>因子</th>
+                <th>中文名</th>
+                <th>分组</th>
+                <th class="num">覆盖率</th>
+                <th class="num">最新均值</th>
+                <th class="num">有效股票</th>
+                <th>状态 / 说明</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <span class="info" id="pager-info">—</span>
+          <button type="button" id="prev-page">上一页</button>
+          <button type="button" id="next-page">下一页</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="notes">
+      <div class="section-head">
+        <h2>口径与局限</h2>
+      </div>
+      <p class="section-note">
+        复现的目标是「公式可读、逻辑可追、因子值可复算」，不是复刻聚宽的净值曲线。
+        以下差异会直接影响因子值与聚宽看板的可比性。
+      </p>
+      <div class="notes">
+        <div class="note-card ok">
+          <h4>数据与对齐</h4>
+          <ul>
+            <li>行情：新浪日线（前复权），换手率由小数换算为百分数</li>
+            <li>财务：新浪三大报表，年内累计值先还原为单季，再滚动四季求 TTM</li>
+            <li>财务数据按<strong>公告日</strong>对齐到交易日，避免前视偏差</li>
+          </ul>
+        </div>
+        <div class="note-card warn">
+          <h4>已知差异</h4>
+          <ul>
+            <li>总股本用「归母净利润 ÷ 基本每股收益」反推，属近似口径</li>
+            <li>财务复合指标（如 ROIC、经营资产周转率）的四季均值按季末采样近似</li>
+            <li>Barra 复合因子只实现公式完整、子因子可得的少数几个</li>
+          </ul>
+        </div>
+        <div class="note-card info">
+          <h4>未实现原因</h4>
+          <ul>
+            <li>分析师一致预期：AKShare 无稳定历史接口</li>
+            <li>扣非净利润、非经常性损益：不在三大报表口径内</li>
+            <li>9 个 <code>*_v2</code> 因子：聚宽未提供公式</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span id="footer-run">RUN —</span>
+      <span>AKShare · 因子值阶段（无 IC / 无回测）</span>
+    </footer>
+  </main>
+
+  <script src="./assets/echarts.min.js"></script>
+  <script src="./data/page-data.js"></script>
+  <script src="./assets/app.js"></script>
+  <noscript>
+    <p style="max-width:1180px;margin:0 auto;padding:24px;">本页面需要启用 JavaScript 才能渲染图表与因子表。</p>
+  </noscript>
+</body>
+</html>
