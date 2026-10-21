@@ -88,24 +88,24 @@ bash scripts/run.sh --background
 - `docs/data/series/<factor>.js`（`window.SERIES_POOL`）：每个已实现因子一份，含截面中位数、25/75 分位与覆盖率的日序列，详情页按需加载；
 - `docs/data/page-data.js`（`window.PAGE_DATA`）：覆盖率、分组统计与因子值预览，供 `values.html` 使用。
 
-## 每日自动更新与发布
+## 推到 GitHub / 静态托管
 
-仓库自带 GitHub Actions 工作流 `.github/workflows/update-dashboard.yml`：
+仓库里没有配置任何自动任务（没有 GitHub Actions），代码推上去不会自己跑。日常流程就是：
 
-- 每个交易日北京时间 18:30（UTC 10:30）自动运行，收盘后重建数据；
-- 重新抓取行情与财报、计算全部因子、生成 `docs/`；
-- 直接把 `docs/` 作为 Pages 产物发布，**不向仓库提交数据**，避免历史体积膨胀；
-- 支持在 Actions 页面手动触发（`workflow_dispatch`）。
+```bash
+git add .
+git commit -m "update"
+git push
+```
 
-启用方式：仓库 **Settings → Pages → Build and deployment → Source** 选择 **GitHub Actions**，
-再手动运行一次 workflow，之后每天自动更新。页面顶部的「更新至 YYYY-MM-DD」取自本次运行的
-最后一个交易日，页脚保留 RUN 编号便于追溯。
+想让 GitHub Pages 直接托管看板时，二选一：
 
-> 工作流按「本目录即仓库根目录」编排，即 `2-all-factor-dashboard/` 直接作为仓库根；
-> 如果把它放在子目录里，需要相应调整 `working-directory` 与产物路径。
+- **从分支发布**：Settings → Pages → Source 选 *Deploy from a branch*，分支选 `main`，
+  目录选 `/docs`，保存后访问 `https://<用户名>.github.io/<仓库名>/`；
+- **不用 Pages**：直接打开仓库里的 `docs/index.html`，或部署到任意静态托管。
 
-缓存策略：工作流用 `actions/cache` 缓存 `data/cache`；行情缓存要求覆盖最近一个工作日
-（否则自动重取），财报缓存默认 7 天过期（`data.financial_cache_days`），保证新财报能被及时纳入。
+页面顶部的「更新至 YYYY-MM-DD」来自最近一次生成的数据，页脚保留 RUN 编号便于追溯。
+数据要更新时，本地跑一次 `python main.py` 再提交即可。
 
 ## 因子口径要点
 
