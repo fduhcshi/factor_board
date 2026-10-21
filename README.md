@@ -1,9 +1,11 @@
-# 聚宽因子库 · AKShare 复现
+# 一面量化因子砌成的卡片墙
+
+**[在线看板：一面量化因子砌成的卡片墙](https://fduhcshi.github.io/factor_board/)**
 
 把聚宽因子看板（`joinquant_factors.json`，285 个因子）里的自然语言公式，逐条翻译成
 基于 AKShare 公开数据的开源实现，产出**因子值**。本阶段不计算 IC、IR、分层收益与多空净值。
 
-网页看板：[docs/index.html](docs/index.html)（因子看板，双击即可离线打开）
+离线版本：[docs/index.html](docs/index.html)（双击即可打开）
 覆盖率视图：[docs/values.html](docs/values.html)（因子值覆盖率与预览）
 研究报告：[report.md](report.md)
 
